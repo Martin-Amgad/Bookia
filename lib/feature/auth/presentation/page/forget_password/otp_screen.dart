@@ -1,0 +1,151 @@
+import 'dart:developer';
+
+import 'package:bookia/components/buttons/main_button.dart';
+import 'package:bookia/components/inputs/custom_text_field.dart';
+import 'package:bookia/core/constants/app_assets.dart';
+import 'package:bookia/core/extentions/dialogs.dart';
+import 'package:bookia/core/routes/navigation.dart';
+import 'package:bookia/core/routes/routes.dart';
+import 'package:bookia/core/services/local/local_helper.dart';
+import 'package:bookia/core/utils/colors.dart';
+import 'package:bookia/core/utils/text_styles.dart';
+import 'package:bookia/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:bookia/feature/auth/presentation/cubit/auth_state.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:pinput/pinput.dart';
+
+class OTPScreen extends StatefulWidget {
+  const OTPScreen({super.key});
+
+  @override
+  State<OTPScreen> createState() => _OTPScreenState();
+}
+
+class _OTPScreenState extends State<OTPScreen> {
+  @override
+  Widget build(BuildContext context) {
+    var cubit = context.read<AuthCubit>();
+    return Scaffold(
+      bottomNavigationBar: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Didn’t received code?', style: TextStyles.getSize16()),
+            TextButton(
+              onPressed: () {
+                pop(context);
+              },
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              child: Text(
+                'Resend',
+                style: TextStyles.getSize16(color: AppColors.primaryColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        title: GestureDetector(
+          onTap: () {
+            pop(context);
+          },
+          child: Image.asset(AppAssets.arrowBack, width: 41, height: 41),
+        ),
+      ),
+      body: SafeArea(
+        child: BlocListener<AuthCubit, AuthState>(
+          listener: _blockListener,
+          child: Padding(
+            padding: const EdgeInsets.all(22),
+            child: Form(
+              key: cubit.formkey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('OTP Verification', style: TextStyles.getSize30()),
+                    Text(
+                      'Enter the verification code we just sent on your email address.',
+                      style: TextStyles.getSize16(color: AppColors.greyColor),
+                    ),
+                    Gap(30),
+                    //otp window
+                    Center(child: buildPinPut(cubit)),
+                    Gap(15),
+
+                    Gap(30),
+                    MainButton(
+                      title: 'verify',
+                      onPressed: () {
+                        LocalHelper.setString(
+                          LocalHelper.Kotp,
+                          cubit.otpController.text,
+                        );
+                        log('${LocalHelper.getString(LocalHelper.Kotp)}');
+                        if (cubit.formkey.currentState!.validate()) {
+                          cubit.check_forget_password();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPinPut(var cubit) {
+    final defaultPinTheme = PinTheme(
+      width: 70,
+      height: 60,
+      textStyle: TextStyles.getSize24(),
+      decoration: BoxDecoration(
+        color: AppColors.accentColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(color: AppColors.primaryColor, width: 2),
+      borderRadius: BorderRadius.circular(12),
+    );
+
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration!.copyWith(
+        border: Border.all(color: AppColors.primaryColor, width: 2),
+        color: AppColors.whiteColor,
+      ),
+    );
+
+    return Pinput(
+      length: 6,
+      defaultPinTheme: defaultPinTheme,
+      focusedPinTheme: focusedPinTheme,
+      submittedPinTheme: submittedPinTheme,
+      showCursor: true,
+      controller: cubit.otpController,
+      onCompleted: (pin) {
+        print("Entered OTP: $pin");
+      },
+    );
+  }
+}
+
+void _blockListener(BuildContext context, AuthState state) {
+  if (state is AuthSuccessState) {
+    pop(context);
+    pushTo(context, Routes.newPasswordScreen);
+  } else if (state is AuthErrorState) {
+    pop(context);
+    showerrordialoge(context, state.error);
+  } else {
+    showLoadingDialog(context);
+  }
+}
