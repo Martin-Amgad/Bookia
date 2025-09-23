@@ -1,12 +1,14 @@
 import 'package:bookia/core/constants/app_assets.dart';
 import 'package:bookia/core/utils/colors.dart';
+import 'package:bookia/feature/home/data/models/slider_response/slider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class homeslider extends StatefulWidget {
-  const homeslider({super.key});
+  const homeslider({super.key, required this.images});
+  final List<SliderModal> images;
 
   @override
   State<homeslider> createState() => _homesliderState();
@@ -22,7 +24,7 @@ class _homesliderState extends State<homeslider> {
   SmoothPageIndicator BuildIndicator() {
     return SmoothPageIndicator(
       controller: PageController(initialPage: currentIndex),
-      count: 3,
+      count: widget.images.length,
       effect: ExpandingDotsEffect(
         dotColor: AppColors.borderColor,
         activeDotColor: AppColors.primaryColor,
@@ -36,12 +38,12 @@ class _homesliderState extends State<homeslider> {
 
   CarouselSlider BuildSlider() {
     return CarouselSlider.builder(
-      itemCount: 3,
+      itemCount: widget.images.length,
       itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(10),
-            child: Image.asset(
-              AppAssets.welcome,
+            child: Image.network(
+              widget.images[itemIndex].image ?? '',
               fit: BoxFit.cover,
               width: double.infinity,
             ),

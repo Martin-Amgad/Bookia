@@ -1,9 +1,12 @@
-import 'package:bookia/components/buttons/main_button.dart';
 import 'package:bookia/core/constants/app_assets.dart';
-import 'package:bookia/core/utils/colors.dart';
-import 'package:bookia/core/utils/text_styles.dart';
+import 'package:bookia/feature/home/presentation/cubit/home_cubit.dart';
+import 'package:bookia/feature/home/presentation/cubit/home_state.dart';
+import 'package:bookia/feature/home/presentation/widgets/all_products_builder.dart';
+import 'package:bookia/feature/home/presentation/widgets/best_seller_builder.dart';
 import 'package:bookia/feature/home/presentation/widgets/homeslider.dart';
+import 'package:bookia/feature/home/presentation/widgets/new_arrivals_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
@@ -17,84 +20,40 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: SvgPicture.asset(AppAssets.logoSvg, height: 30),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset(AppAssets.searchSvg),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              homeslider(),
-              Gap(20),
-              Text('Best Sellers', style: TextStyles.getSize24()),
-              Gap(15),
-              SizedBox(
-                height: 200,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-
-                  itemBuilder: (BuildContext context, int index) {
-                    return ClipRRect(
-                      borderRadius: BorderRadiusGeometry.circular(10),
-                      child: Image.asset(
-                        AppAssets.welcome,
-                        fit: BoxFit.cover,
-                        width: 150,
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Gap(10);
-                  },
-                  itemCount: 5,
+    return BlocProvider(
+      create: (context) => HomeCubit()..getHomeData(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: SvgPicture.asset(AppAssets.logoSvg, height: 30),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset(AppAssets.searchSvg),
+            ),
+          ],
+        ),
+        body: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            var cubit = context.read<HomeCubit>();
+            if (state is HomeLoadingState || state is HomeErrorState) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    homeslider(images: cubit.sliders),
+                    Gap(20),
+                    BestSellerBuilder(products: cubit.BestSellers),
+                    NewArrivalsBuilder(products: cubit.NewArrivals),
+                    AllProductsBuilder(products: cubit.AllBooks),
+                  ],
                 ),
               ),
-              // Text('New Arrivals', style: TextStyles.getSize24()),
-              // Gap(15),
-              // SizedBox(
-              //   height: 200,
-              //   child: ListView.separated(
-              //     scrollDirection: Axis.horizontal,
-
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return ClipRRect(
-              //         borderRadius: BorderRadiusGeometry.circular(10),
-              //         child: Image.asset(
-              //           AppAssets.welcome,
-              //           fit: BoxFit.cover,
-              //           width: 150,
-              //         ),
-              //       );
-              //     },
-              //     separatorBuilder: (BuildContext context, int index) {
-              //       return Gap(10);
-              //     },
-              //     itemCount: 5,
-              //   ),
-              // ),
-              // GridView.builder(
-              //   shrinkWrap: true,
-              //   physics: NeverScrollableScrollPhysics(),
-              //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              //     crossAxisCount: 2,
-              //     crossAxisSpacing: 10,
-              //     mainAxisSpacing: 10,
-              //   ),
-              //   itemBuilder: (context, index) {
-              //     return Container(child: SvgPicture.asset(AppAssets.appleSvg));
-              //   },
-              // ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
