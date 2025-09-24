@@ -39,6 +39,7 @@ Bookia brings together your favorite books in one place. Whether you’re into f
 <p float="left">
   <img src="https://github.com/user-attachments/assets/832767b5-5a08-424c-853b-aaa4c433e129" width="200" />
   <img src="https://github.com/user-attachments/assets/921706b9-9ea6-49b7-9ab4-b55fb4c63de1" width="200" />
+  <img src="https://github.com/user-attachments/assets/15fe0daa-e73f-4140-ac18-3a3e0fad005d" width="200" />
   <img src="https://github.com/user-attachments/assets/efc897e9-710d-4bb6-9c9d-b1c0588838c4" width="200" />
   <img src="https://github.com/user-attachments/assets/9d30f349-af62-4dcd-9c31-7ee539c16b48" width="200" />
   <img src="https://github.com/user-attachments/assets/de142783-f340-45ec-a417-ccf2efb0858a" width="200" />
