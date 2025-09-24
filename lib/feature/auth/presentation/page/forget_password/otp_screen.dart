@@ -24,6 +24,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  bool resend = false;
   @override
   Widget build(BuildContext context) {
     var cubit = context.read<AuthCubit>();
@@ -35,7 +36,8 @@ class _OTPScreenState extends State<OTPScreen> {
             Text('Didn’t received code?', style: TextStyles.getSize16()),
             TextButton(
               onPressed: () {
-                pop(context);
+                resend = true;
+                cubit.forget_password();
               },
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
               child: Text(
@@ -75,9 +77,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     Gap(30),
                     //otp window
                     Center(child: buildPinPut(cubit)),
-                    Gap(15),
-
-                    Gap(30),
+                    Gap(45),
                     MainButton(
                       title: 'verify',
                       onPressed: () {
@@ -99,6 +99,25 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
       ),
     );
+  }
+
+  void _blockListener(BuildContext context, AuthState state) {
+    if (state is AuthSuccessState) {
+      pop(context);
+      if (!resend) {
+        pushTo(context, Routes.newPasswordScreen);
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("OTP resent successfully")));
+        resend = false;
+      }
+    } else if (state is AuthErrorState) {
+      pop(context);
+      showerrordialoge(context, state.error);
+    } else {
+      showLoadingDialog(context);
+    }
   }
 
   Widget buildPinPut(var cubit) {
@@ -135,17 +154,5 @@ class _OTPScreenState extends State<OTPScreen> {
         print("Entered OTP: $pin");
       },
     );
-  }
-}
-
-void _blockListener(BuildContext context, AuthState state) {
-  if (state is AuthSuccessState) {
-    pop(context);
-    pushTo(context, Routes.newPasswordScreen);
-  } else if (state is AuthErrorState) {
-    pop(context);
-    showerrordialoge(context, state.error);
-  } else {
-    showLoadingDialog(context);
   }
 }
