@@ -1,6 +1,7 @@
 import 'package:bookia/core/constants/app_assets.dart';
 import 'package:bookia/core/utils/colors.dart';
 import 'package:bookia/feature/home/presentation/page/home_screen.dart';
+import 'package:bookia/feature/wishlist/presentation/page/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -13,13 +14,29 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
+
+  final List<Widget> screens = [HomeScreen(), WishlistScreen()];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: HomeScreen(), bottomNavigationBar: _BuildNavBar());
+    return Scaffold(
+      body: screens[currentIndex],
+      bottomNavigationBar: _BuildNavBar(),
+    );
   }
 
   BottomNavigationBar _BuildNavBar() {
     return BottomNavigationBar(
+      elevation: 0,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.transparent,
+      selectedItemColor: AppColors.primaryColor,
+      unselectedItemColor: Colors.black,
+      currentIndex: currentIndex,
+      onTap: (index) {
+        setState(() {
+          currentIndex = index;
+        });
+      },
       items: [
         BottomNavigationBarItem(
           icon: SvgPicture.asset(AppAssets.homeSvg),
@@ -66,12 +83,6 @@ class _MainScreenState extends State<MainScreen> {
           label: 'Profile',
         ),
       ],
-      currentIndex: currentIndex,
-      onTap: (value) {
-        setState(() {
-          currentIndex = value;
-        });
-      },
     );
   }
 }

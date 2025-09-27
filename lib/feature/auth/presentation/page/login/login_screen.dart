@@ -1,3 +1,4 @@
+import 'package:bookia/components/app_bar/app_bar_with_back.dart';
 import 'package:bookia/components/buttons/main_button.dart';
 import 'package:bookia/components/inputs/custom_text_field.dart';
 import 'package:bookia/core/constants/app_assets.dart';
@@ -27,16 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       bottomNavigationBar: _goToSignUp(context),
-      appBar: AppBar(
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        title: GestureDetector(
-          onTap: () {
-            pushWithReplacement(context, Routes.welcome);
-          },
-          child: Image.asset(AppAssets.arrowBack, width: 41, height: 41),
-        ),
-      ),
+      appBar: AppBarWithBack(),
       body: SafeArea(
         child: BlocListener<AuthCubit, AuthState>(
           listener: _blockListener,

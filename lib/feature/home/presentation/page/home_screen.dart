@@ -1,4 +1,5 @@
 import 'package:bookia/core/constants/app_assets.dart';
+import 'package:bookia/core/extentions/dialogs.dart';
 import 'package:bookia/feature/home/presentation/cubit/home_cubit.dart';
 import 'package:bookia/feature/home/presentation/cubit/home_state.dart';
 import 'package:bookia/feature/home/presentation/widgets/all_products_builder.dart';
@@ -47,7 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     homeslider(images: cubit.sliders),
                     Gap(20),
                     BestSellerBuilder(products: cubit.BestSellers),
+                    Gap(20),
                     NewArrivalsBuilder(products: cubit.NewArrivals),
+                    Gap(20),
                     AllProductsBuilder(products: cubit.AllBooks),
                   ],
                 ),

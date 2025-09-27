@@ -41,7 +41,7 @@ class AllProductsBuilder extends StatelessWidget {
           ),
           itemCount: products.length,
           itemBuilder: (context, index) {
-            return BookCard(product: products[index]);
+            return BookCard(product: products[index], source: 'All');
           },
         ),
       ],

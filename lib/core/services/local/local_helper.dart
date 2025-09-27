@@ -14,21 +14,21 @@ class LocalHelper {
     prefrences = await SharedPreferences.getInstance();
   }
 
-  static setUserData(Data? userdata) async {
+  static setUserData(UserData? userdata) async {
     if (userdata == null) return;
     var objectJson = userdata.toJson();
     var UserDataString = jsonEncode(objectJson);
     await prefrences.setString(KUserData, UserDataString);
   }
 
-  static Future<Data?> getUserData() async {
+  static UserData? getUserData() {
     var source = prefrences.getString(KUserData);
     if (source == null) {
       return null;
     }
     var objectJson = jsonDecode(source);
-    var userData = Data.fromJson(objectJson);
-    return userData;
+    var userdata = UserData.fromJson(objectJson);
+    return userdata;
   }
 
   static String? getString(String key) {

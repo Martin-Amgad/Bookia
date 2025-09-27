@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bookia/core/routes/routes.dart';
 import 'package:bookia/core/services/local/local_helper.dart';
 import 'package:bookia/feature/welcome/welcom_screen.dart';
@@ -23,13 +25,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      LocalHelper.getUserData().then((value) {
-        if (value != null) {
-          pushWithReplacement(context, Routes.mainScreen);
-        } else {
-          pushWithReplacement(context, Routes.welcome);
-        }
-      });
+      log('${LocalHelper.getUserData()?.token}');
+      if (LocalHelper.getUserData() != null) {
+        pushWithReplacement(context, Routes.mainScreen);
+      } else {
+        pushWithReplacement(context, Routes.welcome);
+      }
     });
   }
 

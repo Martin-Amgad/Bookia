@@ -34,7 +34,7 @@ class BestSellerBuilder extends StatelessWidget {
             scrollDirection: Axis.horizontal,
 
             itemBuilder: (BuildContext context, int index) {
-              return BookCard(product: products[index]);
+              return BookCard(product: products[index], source: 'Best');
             },
             separatorBuilder: (BuildContext context, int index) {
               return Gap(10);
